@@ -7,10 +7,13 @@ export const Grid: React.FC<{}> = () => {
 		<>
 			<div
 				style={{ gridTemplateColumns: `repeat(${size}, 1fr)` }}
-				className="grid-wrapper grid gap-x-2 gap-y-8"
+				className="grid-wrapper grid gap-4 w-[80vw] h-[80vh]"
 			>
 				{grid.flat().map((cell, i) => (
-					<div key={i} className="text-center">
+					<div
+						key={i}
+						className="flex items-center justify-center text-center text-3xl bg-slate-200 p-8 text-slate-900 rounded-md"
+					>
 						{cell.key}
 					</div>
 				))}
