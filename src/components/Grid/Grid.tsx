@@ -1,15 +1,14 @@
 import { MouseEvent, useRef } from "react";
 
 import { useInitGrid } from "../../hooks/useInitGrid";
-import { Letter } from "../../types";
 import { getLetterByRowCol } from "../../utils/getLetterByRowCol";
 
 export const SIZE = 5;
 
 export const Grid: React.FC<{}> = () => {
-    const grid = useInitGrid(SIZE);
+    const GridManager = useInitGrid(SIZE);
+    (window as any).GridManager = GridManager;
     const isMouseDownRef = useRef(false);
-    const selectedLetters = useRef<Letter[]>([]);
 
     const handleMouseDown = (e: MouseEvent<HTMLDivElement>) => {
         isMouseDownRef.current = true;
@@ -23,11 +22,11 @@ export const Grid: React.FC<{}> = () => {
         isMouseDownRef.current = false;
 
 
-        const word = selectedLetters.current.map(l => l.key).join("");
+        const word = GridManager.selectedLetters.current.map(l => l.key).join("");
         console.log(word);
 
-        selectedLetters.current = [];
-        grid.flat().forEach(l => l.ref?.classList?.remove("selected"));
+        GridManager.selectedLetters.current = [];
+        GridManager.grid.flat().forEach(l => l.ref?.classList?.remove("selected"));
     };
 
     const handleMouseOver = (e: MouseEvent<HTMLDivElement>) => {
@@ -37,29 +36,20 @@ export const Grid: React.FC<{}> = () => {
         if (!letterKeys) return;
 
         const [row, col] = letterKeys.split(",");
-        const letter = getLetterByRowCol(grid, parseInt(row), parseInt(col));
+        const letter = getLetterByRowCol(GridManager.grid, parseInt(row), parseInt(col));
 
         console.log(letter);
         if (letter) {
-            if (letter.ref && letter.ref.classList.contains("selected")) {
-                const currentLetterIndex = selectedLetters.current.findIndex(e => e === letter);
-                selectedLetters.current.splice(currentLetterIndex - 1, 2);
-                selectedLetters.current[currentLetterIndex - 1]?.ref?.classList.remove("selected");
-                letter.ref.classList.remove("selected");
-            } else {
-
-                letter.ref?.classList.add("selected");
-                selectedLetters.current.push(letter);
-            }
+            GridManager.pushToSelectedLetters(letter);
         }
     };
     return (
         <>
             <div
                 style={{ gridTemplateColumns: `repeat(${SIZE}, 1fr)` }}
-                className="grid-wrapper grid gap-4 w-[80vw] h-[80vh]"
+                className="grid-wrapper grid gap-8 w-[80vw] h-[80vh]"
             >
-                {grid.flat().map((letter, i) => (
+                {GridManager.grid.flat().map((letter, i) => (
                     <div
                         key={`${letter.row},${letter.column}`}
                         ref={e => letter.ref = e}
