@@ -1,4 +1,4 @@
-import { MouseEvent, useRef } from "react";
+import { MouseEvent, useRef, useState } from "react";
 
 import { useInitGrid } from "../../hooks/useInitGrid";
 import { getLetterByRowCol } from "../../utils/getLetterByRowCol";
@@ -7,6 +7,7 @@ export const SIZE = 5;
 
 export const Grid: React.FC<{}> = () => {
     const GridManager = useInitGrid(SIZE);
+    const [currentWord, setCurrentWord] = useState<string>("");
     (window as any).GridManager = GridManager;
     const isMouseDownRef = useRef(false);
 
@@ -40,10 +41,12 @@ export const Grid: React.FC<{}> = () => {
 
         if (letter) {
             GridManager.pushToSelectedLetters(letter);
+            setCurrentWord(GridManager.selectedLetters.current.map(l => l.key).join(""));
         }
     };
     return (
         <>
+            <h1 className="text-green-500 text-5xl mb-8">{currentWord}</h1>
             <div
                 style={{ gridTemplateColumns: `repeat(${SIZE}, 1fr)` }}
                 className="grid-wrapper grid gap-8 w-[80vw] h-[80vh]"
