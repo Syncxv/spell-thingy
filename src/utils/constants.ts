@@ -3,8 +3,8 @@ export const directions = {
     RIGHT: [0, 1], // right
     DOWN: [1, 0], // down
     LEFT: [0, -1], // left
-    TOPRIGHT: [-1, 1], // up-right
-    BOTTOMRRIGHT: [1, 1], // down-right
-    BOTTOMLEFT: [1, -1], // down-left
-    TOPLEFT: [-1, -1] // up-left
+    "TOP-RIGHT": [-1, 1], // up-right
+    "BOTTOM-RIGHT": [1, 1], // down-right
+    "BOTTOM-LEFT": [1, -1], // down-left
+    "TOP-LEFT": [-1, -1] // up-left
 } as const;
