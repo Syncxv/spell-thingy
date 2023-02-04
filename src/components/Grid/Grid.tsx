@@ -38,7 +38,6 @@ export const Grid: React.FC<{}> = () => {
         const [row, col] = letterKeys.split(",");
         const letter = getLetterByRowCol(GridManager.grid, parseInt(row), parseInt(col));
 
-        console.log(letter);
         if (letter) {
             GridManager.pushToSelectedLetters(letter);
         }
