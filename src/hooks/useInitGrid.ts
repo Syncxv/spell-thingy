@@ -38,21 +38,18 @@ export const useInitGrid = (size = 5) => {
         },
 
         pushToSelectedLetters(letter: Letter) {
-            const selectedLetters = this.selectedLetters.current;
-            const prevLetter = selectedLetters[selectedLetters.length - 1];
-            if (prevLetter) {
-                const neigbours = this.getNeighbours(prevLetter);
-                console.log(neigbours.map(m => m.key), letter);
-                if (!neigbours.includes(letter)) return;
-
+            const selectedLetterz = this.selectedLetters.current;
+            if (selectedLetterz.length > 0 && !this.isAdjecent(letter, selectedLetterz[selectedLetterz.length - 1])) {
+                grid.flat().forEach(m => m.ref?.classList.remove("selected"));
+                selectedLetters.current = [];
             }
             if (letter.ref && letter.ref.classList.contains("selected")) {
-                const currentLetterIndex = selectedLetters.findIndex(e => e === letter);
-                selectedLetters.splice(currentLetterIndex, 1);
+                const currentLetterIndex = selectedLetterz.findIndex(e => e === letter);
+                selectedLetterz.splice(currentLetterIndex, 1);
                 letter.ref.classList.remove("selected");
             } else {
                 letter.ref?.classList.add("selected");
-                selectedLetters.push(letter);
+                selectedLetterz.push(letter);
             }
         },
 
@@ -70,6 +67,11 @@ export const useInitGrid = (size = 5) => {
             }
             return neighbors;
 
+        },
+
+
+        isAdjecent(a: Letter, b: Letter) {
+            return Math.abs(a.column - b.column) <= 1 && Math.abs(a.row - b.row) <= 1;
         }
     };
 };
