@@ -44,6 +44,17 @@ export const useInitGrid = (size = 5) => {
             const newGrid = shuffleGrid(size);
             setGrid(newGrid);
         },
+
+        setNewGrid(str: string) {
+            const rows: Letter[][] = [];
+            const columns = 5;
+
+            for (let i = 0; i < str.length; i += columns) {
+                rows.push(str.slice(i, i + columns).split("").map((s, j) => ({ id: uuidv4(), row: i, column: j, key: s.toUpperCase(), value: getValue(s.toUpperCase()) })));
+            }
+
+            setGrid(rows);
+        },
         move(direction: keyof typeof directions, from: Letter, distance = 1) {
             this.checkIfIsStart(from);
             const [dx, dy] = directions[direction];
@@ -108,52 +119,94 @@ export const useInitGrid = (size = 5) => {
             }
             return neighbors;
         },
-        getAllCombinations(row: number, col: number, visited: boolean[][], combination: Letter[], allCombinations: Letter[][]) {
-            if (row < 0 || row >= size || col < 0 || col >= size || visited[row][col]) {
-                return;
-            }
 
-            visited[row][col] = true;
+        getCombinations(len = 4) {
+            const N = grid.length;
+            const allCombinations = new Set<string>();
+            const visited = Array.from(Array(N), () => Array(N).fill(false));
+            const frequencyMap = new Map<string, number>();
 
-            // add the letter at this cell to the combination
-            combination.push(grid[row][col]);
-            // if the combination is of the desired length, add it to the allCombinations list
-            if (combination.length > 4) {
-                allCombinations.push([...combination]);
-            } else {
-                this.getAllCombinations(row - 1, col - 1, visited, combination, allCombinations);
-                this.getAllCombinations(row - 1, col, visited, combination, allCombinations);
-                this.getAllCombinations(row - 1, col + 1, visited, combination, allCombinations);
-                this.getAllCombinations(row, col - 1, visited, combination, allCombinations);
-                this.getAllCombinations(row, col + 1, visited, combination, allCombinations);
-                this.getAllCombinations(row + 1, col - 1, visited, combination, allCombinations);
-                this.getAllCombinations(row + 1, col, visited, combination, allCombinations);
-                this.getAllCombinations(row + 1, col + 1, visited, combination, allCombinations);
-            }
-
-
-            combination.pop();
-            visited[row][col] = false;
-        },
-
-        getCombinations() {
-            const allCombinations: Letter[][] = [];
-            const combination: Letter[] = [];
-            const visited = Array(size).fill(false).map(() => Array(size).fill(false));
-
-            // start the recursive process from each cell in the grid
-            for (let row = 0; row < size; row++) {
-                for (let col = 0; col < size; col++) {
-                    this.getAllCombinations(row, col, visited, combination, allCombinations);
+            // Populate the frequency map
+            for (let row = 0; row < N; row++) {
+                for (let col = 0; col < N; col++) {
+                    const letter = grid[row][col];
+                    if (frequencyMap.has(letter.key.toLowerCase())) {
+                        frequencyMap.set(letter.key.toLowerCase(), frequencyMap.get(letter.key.toLowerCase())! + 1);
+                    } else {
+                        frequencyMap.set(letter.key.toLowerCase(), 1);
+                    }
                 }
             }
 
-            return allCombinations;
+            const getAllCombinations = (
+                row: number,
+                col: number,
+                visited: boolean[][],
+                combination: string,
+                allCombinations: Set<string>,
+                remaining: Map<string, number>,
+                length: number
+            ) => {
+                if (combination.length === length) {
+                    allCombinations.add(combination);
+                    return;
+                }
+
+                visited[row][col] = true;
+
+
+                for (const [rowDelta, colDelta] of Object.values(directions)) {
+                    const newRow = row + rowDelta;
+                    const newCol = col + colDelta;
+                    if (
+                        newRow >= 0 &&
+                        newRow < N &&
+                        newCol >= 0 &&
+                        newCol < N &&
+                        !visited[newRow][newCol]
+                    ) {
+                        const letter = grid[newRow][newCol];
+                        if (remaining.get(letter.id) === frequencyMap.get(letter.id)) {
+                            continue;
+                        }
+                        remaining.set(letter.id, remaining.get(letter.id)! + 1);
+                        getAllCombinations(
+                            newRow,
+                            newCol,
+                            visited,
+                            combination + letter.key.toLowerCase(),
+                            allCombinations,
+                            remaining,
+                            length
+                        );
+                        remaining.set(letter.id, remaining.get(letter.id)! - 1);
+                    }
+                }
+                visited[row][col] = false;
+            };
+
+            for (let length = 2; length <= N; length++) {
+                for (let row = 0; row < N; row++) {
+                    for (let col = 0; col < N; col++) {
+                        getAllCombinations(
+                            row,
+                            col,
+                            visited,
+                            grid[row][col].key.toLowerCase(),
+                            allCombinations,
+                            new Map(frequencyMap),
+                            length
+                        );
+                    }
+                }
+            }
+
+            return Array.from(allCombinations);
         },
 
 
-        getWords() {
-            return this.getCombinations().map(l => l.map(s => s.key)).map(l => l.join("").toLowerCase()).filter(m => this.validWords.includes(m));
+        getWords(n = 4) {
+            return this.getCombinations(n);
         }
 
 
