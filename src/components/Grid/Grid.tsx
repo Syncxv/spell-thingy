@@ -21,10 +21,7 @@ export const Grid: React.FC<{}> = () => {
 
     const handleMouseUp = (e: MouseEvent) => {
         isMouseDownRef.current = false;
-
-
-        const word = GridManager.selectedLetters.current.map(l => l.key).join("");
-        console.log(word);
+        console.log(GridManager.getCurrentWordString());
 
         GridManager.selectedLetters.current = [];
         GridManager.grid.flat().forEach(l => l.ref?.classList?.remove("selected"));
@@ -41,7 +38,7 @@ export const Grid: React.FC<{}> = () => {
 
         if (letter) {
             GridManager.pushToSelectedLetters(letter);
-            setCurrentWord(GridManager.selectedLetters.current.map(l => l.key).join(""));
+            setCurrentWord(GridManager.getCurrentWordString());
         }
     };
     return (

@@ -66,6 +66,8 @@ export const useInitGrid = (size = 5) => {
 
         isAdjecent(a: Letter, b: Letter) {
             return Math.abs(a.column - b.column) <= 1 && Math.abs(a.row - b.row) <= 1;
-        }
+        },
+
+        getCurrentWordString: () => selectedLetters.current.map(l => l.key).join("")
     };
 };
