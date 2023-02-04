@@ -43,7 +43,7 @@ export const Grid: React.FC<{}> = () => {
     };
     return (
         <>
-            <h1 className="text-green-500 text-5xl mb-8">{currentWord}</h1>
+            <h1 className="text-green-500 text-5xl mb-8">{currentWord || "hi"}</h1>
             <div
                 style={{ gridTemplateColumns: `repeat(${SIZE}, 1fr)` }}
                 className="grid-wrapper grid gap-8 w-[80vw] h-[80vh]"
