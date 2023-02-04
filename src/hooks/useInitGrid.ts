@@ -5,14 +5,6 @@ import { getValue } from "../utils/getValue";
 
 const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-const moveUp = (grid: Letter[][], selectedLettersRef: React.MutableRefObject<Letter[]>) => (from: Letter, distnace = 1) => {
-
-};
-
-const pushSelectedLayers = (selectedLetters: React.MutableRefObject<Letter[]>) => (letter: Letter) => {
-
-};
-
 export const useInitGrid = (size = 5) => {
     const [grid, setGrid] = useState<Letter[][]>([]);
     const selectedLetters = useRef<Letter[]>([]);
