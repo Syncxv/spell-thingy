@@ -149,6 +149,11 @@ export const useInitGrid = (size = 5) => {
             }
 
             return allCombinations;
+        },
+
+
+        getWords() {
+            return this.getCombinations().map(l => l.map(s => s.key)).map(l => l.join("").toLowerCase()).filter(m => this.validWords.includes(m));
         }
 
 
