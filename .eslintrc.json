@@ -2,6 +2,11 @@
     "root": true,
     "parser": "@typescript-eslint/parser",
     "ignorePatterns": ["dist", "browser"], 
+    "plugins": [
+        "@typescript-eslint",
+        "simple-import-sort",
+        "unused-imports"
+    ],
     "rules": {
         "quotes": ["error", "double", { "avoidEscape": true }],
         "jsx-quotes": ["error", "prefer-double"],
@@ -59,8 +64,7 @@
         "simple-import-sort/imports": "error",
         "simple-import-sort/exports": "error",
 
-        "unused-imports/no-unused-imports": "error",
+        "unused-imports/no-unused-imports": "error"
 
-        "path-alias/no-relative": "error"
     }
 }

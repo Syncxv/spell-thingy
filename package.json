@@ -7,7 +7,7 @@
         "dev": "vite",
         "build": "tsc && vite build",
         "preview": "vite preview",
-        "lint": "eslint"
+        "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
     },
     "dependencies": {
         "react": "^18.2.0",
@@ -20,7 +20,7 @@
         "@typescript-eslint/eslint-plugin": "^5.49.0",
         "@typescript-eslint/parser": "^5.49.0",
         "autoprefixer": "^10.4.13",
-        "eslint": "^8.33.0",
+        "eslint": "8.28.0",
         "eslint-plugin-simple-import-sort": "^8.0.0",
         "eslint-plugin-unused-imports": "^2.0.0",
         "postcss": "^8.4.21",
@@ -28,5 +28,21 @@
         "tailwindcss": "^3.2.4",
         "typescript": "^4.9.3",
         "vite": "^4.1.0"
+    },
+    "pnpm": {
+        "patchedDependencies": {
+            "eslint@8.28.0": "patches/eslint@8.28.0.patch"
+        },
+        "peerDependencyRules": {
+            "ignoreMissing": [
+                "eslint"
+            ]
+        },
+        "allowedDeprecatedVersions": {
+            "source-map-resolve": "*",
+            "resolve-url": "*",
+            "source-map-url": "*",
+            "urix": "*"
+        }
     }
 }

@@ -3,4 +3,9 @@ export type Letter = {
 	value: number
 	// A, B, C etc yk
 	key: string
+
+	row: number
+
+	column: number
+
 }
