@@ -6,6 +6,10 @@
     overflow: auto; // added this line
 }
 
+.selected {
+    background-color: rgb(36, 36, 182);
+}
+
 body {
     font-family: 'Red Hat Display', sans-serif;
     width: 100vw;
