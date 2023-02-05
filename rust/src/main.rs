@@ -110,21 +110,21 @@ fn main() {
                 &mut visited,
                 combination.clone(),
                 &mut all_combinations,
-                4,
+                9,
             );
         }
     }
     let end = SystemTime::now();
     let duration = end.duration_since(start).unwrap();
 
-    for (_, row) in all_combinations.iter().enumerate() {
-        let res = row
-            .iter()
-            .map(|x| String::from(x.key))
-            .collect::<Vec<String>>()
-            .join("");
-        print!("{}\n", res);
-    }
+    // for (_, row) in all_combinations.iter().enumerate() {
+    //     let res = row
+    //         .iter()
+    //         .map(|x| String::from(x.key))
+    //         .collect::<Vec<String>>()
+    //         .join("");
+    //     print!("{}\n", res);
+    // }
     println!("it took {} seconds", duration.as_secs());
     println!("ho, {:?}", all_combinations.len());
 }
