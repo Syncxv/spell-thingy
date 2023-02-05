@@ -2,18 +2,18 @@ use rand::Rng;
 use std::time::SystemTime;
 use uuid::Uuid;
 
+use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
-
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
 // allocator.
 #[cfg(feature = "wee_alloc")]
 #[global_allocator]
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[wasm_bindgen]
 struct Letter {
-    id: Uuid,
+    id: String,
     // A, B, C etc yk
     key: char,
 
@@ -23,7 +23,7 @@ struct Letter {
 }
 
 impl Letter {
-    pub fn new(id: Uuid, key: char, row: i32, column: i32) -> Letter {
+    pub fn new(id: String, key: char, row: i32, column: i32) -> Letter {
         Letter {
             id,
             column,
@@ -90,18 +90,8 @@ fn get_random_char() -> char {
 }
 
 #[wasm_bindgen]
-pub fn getWords(mut grid: Vec<Vec<Letter>>) {
-    for row in 0..SIZE {
-        grid.push(vec![]);
-        for col in 0..SIZE {
-            grid[row as usize].push(Letter::new(
-                Uuid::new_v4(),
-                get_random_char(),
-                row.try_into().unwrap(),
-                col,
-            ));
-        }
-    }
+pub fn getWords(_grid: JsValue) {
+    let grid = jsvalue_to_2d_array(_grid).unwrap();
 
     let mut all_combinations: Vec<Vec<&Letter>> = vec![];
     let combination: Vec<&Letter> = vec![];
@@ -136,4 +126,8 @@ pub fn getWords(mut grid: Vec<Vec<Letter>>) {
     // }
     println!("it took {} seconds", duration.as_secs());
     println!("ho, {:?}", all_combinations.len());
+}
+
+fn jsvalue_to_2d_array(js_value: JsValue) -> Option<Vec<Vec<Letter>>> {
+    js_value.into_serde().ok()
 }
