@@ -1,9 +1,17 @@
-use std::time::SystemTime;
-
 use rand::Rng;
-
+use std::time::SystemTime;
 use uuid::Uuid;
+
+use wasm_bindgen::prelude::*;
+
+// When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
+// allocator.
+#[cfg(feature = "wee_alloc")]
+#[global_allocator]
+static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
+
 #[derive(Debug, Clone)]
+#[wasm_bindgen]
 struct Letter {
     id: Uuid,
     // A, B, C etc yk
@@ -80,8 +88,9 @@ fn get_random_char() -> char {
     let random_char = ALPHABET.chars().nth(random_index).unwrap();
     random_char
 }
-fn main() {
-    let mut grid: Vec<Vec<Letter>> = vec![];
+
+#[wasm_bindgen]
+pub fn getWords(mut grid: Vec<Vec<Letter>>) {
     for row in 0..SIZE {
         grid.push(vec![]);
         for col in 0..SIZE {
