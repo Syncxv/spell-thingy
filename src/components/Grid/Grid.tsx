@@ -43,6 +43,7 @@ export const Grid: React.FC<{}> = () => {
     };
     return (
         <>
+            <input type="text" onChange={e => GridManager.setNewGrid(e.target.value)} />
             <h1 className="text-green-500 text-5xl mb-8">{currentWord || "hi"}</h1>
             <div
                 style={{ gridTemplateColumns: `repeat(${SIZE}, 1fr)` }}
