@@ -77,13 +77,6 @@ fn get_all_combinations<'a>(
     visited[row as usize][col as usize] = false;
 }
 
-fn get_random_char() -> char {
-    let mut rng = rand::thread_rng();
-    let random_index = rng.gen_range(0..ALPHABET.len());
-    let random_char = ALPHABET.chars().nth(random_index).unwrap();
-    random_char
-}
-
 #[wasm_bindgen]
 pub fn getWords(_grid: JsValue, n: i32) -> String {
     console::log_1(&"bruh1".into());
