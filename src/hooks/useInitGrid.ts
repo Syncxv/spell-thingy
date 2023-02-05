@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 
+import * as what from "../../rust/pkg";
 import { Letter } from "../types";
 import { directions } from "../utils/constants";
 import { getValue } from "../utils/getValue";
 import { uuidv4 } from "../utils/uuidv4";
-
 const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 const shuffleGrid = (size: number) => {
@@ -168,6 +168,11 @@ export const useInitGrid = (size = 5) => {
 
         getWords(n = 4) {
             return this.getCombinations(n).map(l => l.map(s => s.key)).map(l => l.join("").toLowerCase()).filter(m => this.validWords.includes(m));
+        },
+
+        wasmTest() {
+            console.log(what);
+            return what;
         }
 
 

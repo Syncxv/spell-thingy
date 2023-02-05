@@ -15,3 +15,7 @@ rand = "0.8.5"
 wasm-bindgen = {version = "0.2.84",  features = ["serde-serialize"] }
 serde ={ version = "1.0.152", features = ["derive"]}
 js-sys = "0.3.56"
+
+
+[dependencies.web-sys]
+features = ["console"]

@@ -1,9 +1,10 @@
 use rand::Rng;
 use std::time::SystemTime;
-use uuid::Uuid;
 
 use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
+
+use web_sys::console;
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
 // allocator.
 #[cfg(feature = "wee_alloc")]
@@ -91,7 +92,10 @@ fn get_random_char() -> char {
 
 #[wasm_bindgen]
 pub fn getWords(_grid: JsValue) {
+    console::log_1(&"bruh1".into());
     let grid = jsvalue_to_2d_array(_grid).unwrap();
+
+    console::log_1(&"bruh2".into());
 
     let mut all_combinations: Vec<Vec<&Letter>> = vec![];
     let combination: Vec<&Letter> = vec![];
