@@ -1,13 +1,13 @@
-import { MouseEvent, useRef, useState } from "react";
+import { MouseEvent, useContext, useRef, useState } from "react";
 
-import { useInitGrid } from "../../hooks/useInitGrid";
+import { GridManagerContext } from "../../context/GridContext";
 import { getLetterByRowCol } from "../../utils/getLetterByRowCol";
 import { Options } from "../Options/Options";
 
 export const SIZE = 5;
 
 export const Grid: React.FC<{}> = () => {
-    const GridManager = useInitGrid(SIZE);
+    const GridManager = useContext(GridManagerContext);
     const [currentWord, setCurrentWord] = useState<string>("");
     (window as any).GridManager = GridManager;
     const isMouseDownRef = useRef(false);
@@ -65,7 +65,7 @@ export const Grid: React.FC<{}> = () => {
                     ))}
                 </div>
             </div>
-            <Options setNewGrid={GridManager.setNewGrid} />
+            <Options />
         </>
     );
 };

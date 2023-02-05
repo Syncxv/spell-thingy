@@ -1,48 +1,76 @@
-import { useEffect, useRef, useState } from "react";
+import { createContext, useEffect, useRef, useState } from "react";
 
 import { Letter } from "../types";
 import { directions } from "../utils/constants";
+import { getRandomGrid } from "../utils/getRandomGrid";
 import { getValue } from "../utils/getValue";
 import { uuidv4 } from "../utils/uuidv4";
-const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-const shuffleGrid = (size: number) => {
-    const tempGrid: Letter[][] = [];
-    for (let row = 0; row < size; row++) {
-        tempGrid[row] = [];
-        for (let col = 0; col < size; col++) {
-            const randomLetter = alphabet[Math.floor(Math.random() * alphabet.length)];
-            tempGrid[row][col] = { id: uuidv4(), key: randomLetter, value: getValue(randomLetter), row, column: col };
-        }
-    }
-    return tempGrid;
+export interface IGridManagerContext {
+    grid: Letter[][];
+    selectedLetters: React.MutableRefObject<Letter[]>;
+    size: number;
+    validWordsSet: Set<string>;
+    shuffle(): void;
+    setNewGrid(str: string): void;
+    move(direction: keyof typeof directions, from: Letter, distance?: number): void;
+    checkIfIsStart(letter: Letter): void;
+    pushToSelectedLetters(letter: Letter): void;
+    isAdjecent(a: Letter, b: Letter): boolean;
+    getCurrentWordString: () => string;
+    getNeighbours(letter: Letter): Letter[];
+    getAllCombinations(row: number, col: number, visited: boolean[][], combination: Letter[], allCombinations: Letter[][], desired: number): void;
+    getCombinations(n?: number): Letter[][];
+    getWords(n?: number): string[];
+}
+
+const initalValues: IGridManagerContext = {
+    grid: [],
+    selectedLetters: null as any,
+    size: 5,
+    validWordsSet: new Set(),
+    checkIfIsStart: () => { },
+    move: () => { },
+    pushToSelectedLetters: () => { },
+    setNewGrid: () => { },
+    shuffle: () => { },
+    getAllCombinations: () => { },
+    getCurrentWordString: () => "",
+    getNeighbours: () => [],
+    isAdjecent: () => false,
+    getCombinations: () => [],
+    getWords: () => []
 };
 
-export const useInitGrid = (size = 5) => {
+export const GridManagerContext = createContext<IGridManagerContext>(initalValues);
+
+export interface Props {
+    size: number,
+    children: React.ReactNode
+}
+
+export const GridManagerProvider: React.FC<Props> = ({ size, children }) => {
     const [grid, setGrid] = useState<Letter[][]>([]);
-    const [validWords, setValidWords] = useState<string[]>([] as string[]);
+    const [validWordsSet, setValidWords] = useState<Set<string>>(new Set([]));
     const selectedLetters = useRef<Letter[]>([]);
     useEffect(() => {
 
-        const tempGrid = shuffleGrid(size);
-        setGrid(tempGrid);
+        setGrid(getRandomGrid(size));
 
         async function initWords() {
             const rawText = await (await fetch("https://raw.githubusercontent.com/dwyl/english-words/master/words_alpha.txt")).text();
             const words = rawText.split("\n").map(l => l.replace(/[\r]/g, ""));
-            setValidWords(words);
+            setValidWords(new Set(words));
         }
         initWords();
     }, []);
-    return {
+    return <GridManagerContext.Provider value={{
         grid,
         selectedLetters,
         size,
-        validWords,
-        validWordsSet: new Set(validWords),
+        validWordsSet,
         shuffle() {
-            const newGrid = shuffleGrid(size);
-            setGrid(newGrid);
+            setGrid(getRandomGrid(size));
         },
 
         setNewGrid(str: string) {
@@ -171,8 +199,9 @@ export const useInitGrid = (size = 5) => {
         },
 
 
-    };
+    }}>
+        {children}
+    </GridManagerContext.Provider>;
 
 
 };
-
