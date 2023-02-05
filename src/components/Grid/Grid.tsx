@@ -2,7 +2,7 @@ import { MouseEvent, useContext, useRef, useState } from "react";
 
 import { GridManagerContext } from "../../context/GridContext";
 import { getLetterByRowCol } from "../../utils/getLetterByRowCol";
-import { Options } from "../Options/Options";
+import { SideThing } from "../SideThing/SideThing";
 
 export const SIZE = 5;
 
@@ -54,7 +54,7 @@ export const Grid: React.FC<{}> = () => {
                         <div
                             key={`${letter.row},${letter.column}`}
                             ref={e => letter.ref = e}
-                            className="flex items-center justify-center text-center text-3xl bg-slate-200 h-full aspect-square text-slate-900 rounded-md select-none"
+                            className="flex items-center justify-center text-center text-3xl bg-slate-200 h-full w-full aspect-square text-slate-900 rounded-md select-none"
                             onMouseDown={handleMouseDown}
                             onMouseUp={handleMouseUp}
                             onMouseOver={e => handleMouseOver(e)}
@@ -65,7 +65,7 @@ export const Grid: React.FC<{}> = () => {
                     ))}
                 </div>
             </div>
-            <Options />
+            {GridManager.grid.length && <SideThing />}
         </>
     );
 };

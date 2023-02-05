@@ -17,6 +17,7 @@ export interface IGridManagerContext {
     checkIfIsStart(letter: Letter): void;
     pushToSelectedLetters(letter: Letter): void;
     isAdjecent(a: Letter, b: Letter): boolean;
+    getGridAsString: () => string,
     getCurrentWordString: () => string;
     getNeighbours(letter: Letter): Letter[];
     getAllCombinations(row: number, col: number, visited: boolean[][], combination: Letter[], allCombinations: Letter[][], desired: number): void;
@@ -34,6 +35,7 @@ const initalValues: IGridManagerContext = {
     pushToSelectedLetters: () => { },
     setNewGrid: () => { },
     shuffle: () => { },
+    getGridAsString: () => "",
     getAllCombinations: () => { },
     getCurrentWordString: () => "",
     getNeighbours: () => [],
@@ -132,7 +134,7 @@ export const GridManagerProvider: React.FC<Props> = ({ size, children }) => {
         isAdjecent(a: Letter, b: Letter) {
             return Math.abs(a.column - b.column) <= 1 && Math.abs(a.row - b.row) <= 1;
         },
-
+        getGridAsString: () => grid.flat().map(m => m.key).join(""),
         getCurrentWordString: () => selectedLetters.current.map(l => l.key).join(""),
         getNeighbours(letter: Letter) {
             const neighbors: Letter[] = [];
@@ -162,15 +164,7 @@ export const GridManagerProvider: React.FC<Props> = ({ size, children }) => {
             } else {
                 for (const [dx, dy] of Object.values(directions)) {
                     this.getAllCombinations(row + dx, col + dy, visited, combination, allCombinations, desired);
-
                 }
-                // this.getAllCombinations(row - 1, col, visited, combination, allCombinations);
-                // this.getAllCombinations(row - 1, col + 1, visited, combination, allCombinations);
-                // this.getAllCombinations(row, col - 1, visited, combination, allCombinations);
-                // this.getAllCombinations(row, col + 1, visited, combination, allCombinations);
-                // this.getAllCombinations(row + 1, col - 1, visited, combination, allCombinations);
-                // this.getAllCombinations(row + 1, col, visited, combination, allCombinations);
-                // this.getAllCombinations(row + 1, col + 1, visited, combination, allCombinations);
             }
 
 

@@ -3,16 +3,20 @@ import { useContext } from "react";
 
 import { GridManagerContext } from "../../context/GridContext";
 interface Props {
-
+    onSubmit: (e: initalValues) => void
 }
-export const Options: React.FC<Props> = ({ }) => {
+
+export interface initalValues { letters: string, maxLetters: number }
+
+export const Options: React.FC<Props> = ({ onSubmit }) => {
 
     const GridManager = useContext(GridManagerContext);
     return <div className="option wrapper flex flex-col items-center w-full h-full pt-[7.75rem] px-8">
         <Formik
-            initialValues={{ letters: "", maxLetters: 8 }}
+            initialValues={{ letters: `${GridManager.getGridAsString()}`, maxLetters: 8 }}
             onSubmit={e => {
                 GridManager.setNewGrid(e.letters);
+                onSubmit(e);
             }}>
             <Form className="input-wrapper w-full">
                 <label htmlFor="hi" className="block text-gray-200 font-medium mb-2">Letters</label>
