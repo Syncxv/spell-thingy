@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 
-import * as rustSHeet from "../../rust/pkg";
 import { Letter } from "../types";
 import { directions } from "../utils/constants";
 import { getValue } from "../utils/getValue";
@@ -40,6 +39,7 @@ export const useInitGrid = (size = 5) => {
         selectedLetters,
         size,
         validWords,
+        validWordsSet: new Set(validWords),
         shuffle() {
             const newGrid = shuffleGrid(size);
             setGrid(newGrid);
@@ -167,16 +167,8 @@ export const useInitGrid = (size = 5) => {
 
 
         getWords(n = 4) {
-            return this.getCombinations(n).map(l => l.map(s => s.key)).map(l => l.join("").toLowerCase()).filter(m => this.validWords.includes(m));
+            return this.getCombinations(n).map(l => l.map(s => s.key)).map(l => l.join("").toLowerCase()).filter(m => this.validWordsSet.has(m));
         },
-
-        async wasmTest(n = 4) {
-            await rustSHeet.default();
-            const str = rustSHeet.getWords(grid.flat().map(({ id, key, row, column }) => ({ id, key, row, column })), n);
-            const parsed = JSON.parse(str);
-            const words = parsed.map((l: Letter[]) => l.map(s => s.key).join("").toLowerCase()).filter((m: string) => this.validWords.includes(m)); // the filter is slow af
-            return words;
-        }
 
 
     };
