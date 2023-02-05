@@ -15,23 +15,16 @@ static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[wasm_bindgen]
 pub struct Letter {
-    id: String,
-    // A, B, C etc yk
-    pub key: char,
+    key: char,
 
-    pub row: i32,
+    row: i32,
 
-    pub column: i32,
+    column: i32,
 }
 
 impl Letter {
-    pub fn new(id: String, key: char, row: i32, column: i32) -> Letter {
-        Letter {
-            id,
-            column,
-            key,
-            row,
-        }
+    pub fn new(key: char, row: i32, column: i32) -> Letter {
+        Letter { column, key, row }
     }
 }
 
@@ -63,7 +56,7 @@ fn get_all_combinations<'a>(
 
     visited[row as usize][col as usize] = true;
 
-    combination.push(&grid[row as usize * col as usize + col as usize]);
+    combination.push(&grid[row as usize * SIZE as usize + col as usize]);
     if combination.len() == desired as usize {
         all_combinations.push(combination);
     } else {
