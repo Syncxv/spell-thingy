@@ -76,7 +76,7 @@ fn get_all_combinations<'a>(
 
 fn get_random_char() -> char {
     let mut rng = rand::thread_rng();
-    let random_index = rng.gen_range(0, ALPHABET.len());
+    let random_index = rng.gen_range(0..ALPHABET.len());
     let random_char = ALPHABET.chars().nth(random_index).unwrap();
     random_char
 }
@@ -110,7 +110,7 @@ fn main() {
                 &mut visited,
                 combination.clone(),
                 &mut all_combinations,
-                9,
+                10,
             );
         }
     }
