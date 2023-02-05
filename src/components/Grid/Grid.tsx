@@ -1,4 +1,4 @@
-import { MouseEvent, useEffect, useRef, useState } from "react";
+import { MouseEvent, useRef, useState } from "react";
 
 import { useInitGrid } from "../../hooks/useInitGrid";
 import { getLetterByRowCol } from "../../utils/getLetterByRowCol";
@@ -41,9 +41,6 @@ export const Grid: React.FC<{}> = () => {
             setCurrentWord(GridManager.getCurrentWordString());
         }
     };
-    useEffect(() => {
-        (window as any).rust = GridManager.wasmTest();
-    }, []);
     return (
         <>
             <input type="text" onChange={e => GridManager.setNewGrid(e.target.value)} />
