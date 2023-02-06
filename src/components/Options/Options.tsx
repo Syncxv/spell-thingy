@@ -2,6 +2,7 @@ import { Field, Form, Formik } from "formik";
 import { useContext } from "react";
 
 import { GridManagerContext } from "../../context/GridContext";
+import { DEFAULT_MAX_LETTERS } from "../../utils/constants";
 interface Props {
     onSubmit: (e: initalValues) => void
 }
@@ -13,9 +14,10 @@ export const Options: React.FC<Props> = ({ onSubmit }) => {
     const GridManager = useContext(GridManagerContext);
     return <div className="option wrapper w-full h-full pt-[7.75rem] px-8">
         <Formik
-            initialValues={{ letters: `${GridManager.getGridAsString()}`, maxLetters: 8 }}
+            initialValues={{ letters: `${GridManager.getGridAsString()}`, maxLetters: DEFAULT_MAX_LETTERS }}
             onSubmit={e => {
                 GridManager.setNewGrid(e.letters);
+                GridManager.setMaxLetters(e.maxLetters);
                 onSubmit(e);
             }}>
             <Form className="input-wrapper w-full h-full flex flex-col justify-between items-start">

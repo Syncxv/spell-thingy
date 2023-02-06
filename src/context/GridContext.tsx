@@ -1,7 +1,7 @@
 import { createContext, useEffect, useRef, useState } from "react";
 
 import { Letter } from "../types";
-import { directions } from "../utils/constants";
+import { DEFAULT_MAX_LETTERS, directions } from "../utils/constants";
 import { getRandomGrid } from "../utils/getRandomGrid";
 import { getValue } from "../utils/getValue";
 import { uuidv4 } from "../utils/uuidv4";
@@ -10,6 +10,8 @@ export interface IGridManagerContext {
     grid: Letter[][];
     selectedLetters: React.MutableRefObject<Letter[]>;
     size: number;
+    maxLetters: number,
+    setMaxLetters: React.Dispatch<React.SetStateAction<number>>,
     validWordsSet: Set<string>;
     shuffle(): void;
     setNewGrid(str: string): void;
@@ -29,6 +31,8 @@ const initalValues: IGridManagerContext = {
     grid: [],
     selectedLetters: null as any,
     size: 5,
+    maxLetters: 0,
+    setMaxLetters: () => { },
     validWordsSet: new Set(),
     checkIfIsStart: () => { },
     move: () => { },
@@ -54,6 +58,7 @@ export interface Props {
 export const GridManagerProvider: React.FC<Props> = ({ size, children }) => {
     const [grid, setGrid] = useState<Letter[][]>([]);
     const [validWordsSet, setValidWords] = useState<Set<string>>(new Set([]));
+    const [maxLetters, setMaxLetters] = useState(DEFAULT_MAX_LETTERS);
     const selectedLetters = useRef<Letter[]>([]);
     useEffect(() => {
 
@@ -71,6 +76,8 @@ export const GridManagerProvider: React.FC<Props> = ({ size, children }) => {
         selectedLetters,
         size,
         validWordsSet,
+        maxLetters,
+        setMaxLetters,
         shuffle() {
             setGrid(getRandomGrid(size));
         },

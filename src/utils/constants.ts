@@ -8,3 +8,6 @@ export const directions = {
     "BOTTOM-LEFT": [1, -1], // down-left
     "TOP-LEFT": [-1, -1] // up-left
 } as const;
+
+
+export const DEFAULT_MAX_LETTERS = 6;

@@ -11,5 +11,7 @@ export const SideThing: React.FC<Props> = () => {
         console.log("hi", e);
         setSubmited(true);
     };
-    return hasSubmited ? <Results /> : <Options onSubmit={onSubmit} />;
+
+    const onNewBoard = () => setSubmited(false);
+    return hasSubmited ? <Results onNewBoard={onNewBoard} /> : <Options onSubmit={onSubmit} />;
 };
