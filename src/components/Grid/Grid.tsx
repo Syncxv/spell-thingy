@@ -44,7 +44,7 @@ export const Grid: React.FC<{}> = () => {
     };
     return (
         <>
-            <div className="grid-wrapper p-11 flex flex-col items-center justify-center">
+            <div className="grid-wrapper p-11 pb-0 flex flex-col items-center justify-center">
                 <h1 className="text-green-500 text-5xl mb-8">{currentWord || "hi"}</h1>
                 <div
                     style={{ gridTemplateColumns: `repeat(${SIZE}, auto)` }}

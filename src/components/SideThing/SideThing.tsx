@@ -9,6 +9,7 @@ export const SideThing: React.FC<Props> = () => {
     const [hasSubmited, setSubmited] = useState(false);
     const onSubmit = (e: initalValues) => {
         console.log("hi", e);
+        setSubmited(true);
     };
     return hasSubmited ? <Results /> : <Options onSubmit={onSubmit} />;
 };
