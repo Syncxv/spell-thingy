@@ -7,7 +7,7 @@ import { SideThing } from "../SideThing/SideThing";
 export const SIZE = 5;
 
 export const Grid: React.FC<{}> = () => {
-    const GridManager = useContext(GridManagerContext);
+    const { GridManager } = useContext(GridManagerContext);
     const [currentWord, setCurrentWord] = useState<string>("");
     useEffect(() => {
 

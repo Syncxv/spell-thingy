@@ -11,7 +11,7 @@ export interface initalValues { letters: string, maxLetters: number }
 
 export const Options: React.FC<Props> = ({ onSubmit }) => {
 
-    const GridManager = useContext(GridManagerContext);
+    const { GridManager } = useContext(GridManagerContext);
     return <div className="option wrapper w-full h-full pt-[7.75rem] px-8">
         <Formik
             initialValues={{ letters: `${GridManager.getGridAsString()}`, maxLetters: DEFAULT_MAX_LETTERS }}
