@@ -37,7 +37,7 @@ export const Results: React.FC<Props> = ({ onNewBoard }) => {
                         )}
                     </div>
                     <div className="word-wrapper flex gap-4 flex-wrap overflow-auto py-4 max-h-[30rem]">
-                        {results.length && results[tab].length ? results[tab].map(word => <div className="p-2 bg-gray-200 text-gray-900 rounded-md">{word}</div>) : <p>No words eh</p>}
+                        {results.length && results[tab].length ? results[tab].map((word, i) => <div key={i} className="p-2 bg-gray-200 text-gray-900 rounded-md">{word}</div>) : <p>No words eh</p>}
                     </div>
                 </div>
             </div>
