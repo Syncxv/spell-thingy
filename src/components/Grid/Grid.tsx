@@ -27,9 +27,7 @@ export const Grid: React.FC<{}> = () => {
     const handleMouseUp = (e: MouseEvent) => {
         isMouseDownRef.current = false;
         console.log(GridManager.getCurrentWordString());
-
-        GridManager.selectedLetters.current = [];
-        GridManager.grid.flat().forEach(l => l.ref?.classList?.remove("selected"));
+        GridManager.resetSelectedWords();
     };
 
     const handleMouseOver = (e: MouseEvent<HTMLDivElement>) => {

@@ -70,8 +70,7 @@ export class GridManager {
     pushToSelectedLetters(letter: Letter) {
         if (this.selectedLetters.current.length > 0 && !this.isAdjecent(letter, this.selectedLetters.current[this.selectedLetters.current.length - 1])) {
             console.log("is not adjacent so removing all selected layers ong");
-            this.grid.flat().forEach(m => m.ref?.classList.remove("selected"));
-            this.selectedLetters.current = ([]);
+            this.resetSelectedWords();
         }
         for (var selectionType = -1, o = 0; o < this.selectedLetters.current.length; o++)
             if (this.selectedLetters.current[o].id === letter.id) {
