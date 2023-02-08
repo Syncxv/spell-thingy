@@ -1,11 +1,12 @@
 import { useContext, useEffect, useState } from "react";
 
 import { GridManagerContext } from "../../context/GridContext";
+import { Letter } from "../../types";
 interface Props {
     onNewBoard: () => void,
 }
 export const Results: React.FC<Props> = ({ onNewBoard }) => {
-    const [results, setResults] = useState<string[][]>([]);
+    const [results, setResults] = useState<Letter[][][]>([]);
     const [tab, setTab] = useState(-1);
     const GridManager = useContext(GridManagerContext);
     useEffect(() => {
@@ -14,7 +15,7 @@ export const Results: React.FC<Props> = ({ onNewBoard }) => {
             for (let i = 1; i < GridManager.maxLetters + 1; ++i) {
 
                 console.time("hi" + i);
-                res.push(GridManager.getWords(i));
+                res.push(GridManager.getCombinations(i));
                 console.timeEnd("hi" + i);
             }
 
@@ -37,7 +38,7 @@ export const Results: React.FC<Props> = ({ onNewBoard }) => {
                         )}
                     </div>
                     <div className="word-wrapper flex gap-4 flex-wrap overflow-auto py-4 max-h-[30rem]">
-                        {results.length && results[tab].length ? results[tab].map((word, i) => <div key={i} className="p-2 bg-gray-200 text-gray-900 rounded-md">{word}</div>) : <p>No words eh</p>}
+                        {results.length && results[tab].length ? results[tab].map((word, i) => <div key={i} className="p-2 bg-gray-200 text-gray-900 rounded-md">{word.map(m => m.key).join("")}</div>) : <p>No words eh</p>}
                     </div>
                 </div>
             </div>

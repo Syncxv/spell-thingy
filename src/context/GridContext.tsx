@@ -25,7 +25,7 @@ export interface IGridManagerContext {
     getNeighbours(letter: Letter): Letter[];
     getAllCombinations(row: number, col: number, visited: boolean[][], combination: Letter[], allCombinations: Letter[][], desired: number): void;
     getCombinations(n?: number): Letter[][];
-    getWords(n?: number): string[];
+    getWords(arr: Letter[][]): string[];
 }
 
 const initalValues: IGridManagerContext = {
@@ -65,7 +65,7 @@ export const GridManagerProvider: React.FC<Props> = ({ size, children }) => {
     useEffect(() => {
 
         setGrid(getRandomGrid(size));
-        const words = wordlist.split("\n").map(l => l.replace(/[\r]/g, ""));
+        const words = wordlist.split("\n").map(l => l.replace(/[\r]/g, "").toLowerCase());
 
         setValidWords(new Set(words));
     }, []);
@@ -189,12 +189,12 @@ export const GridManagerProvider: React.FC<Props> = ({ size, children }) => {
                 }
             }
 
-            return allCombinations;
+            return allCombinations.filter(m => validWordsSet.has(m.map(s => s.key).join("").toLowerCase()));
         },
 
 
-        getWords(n = 4) {
-            return this.getCombinations(n).map(l => l.map(s => s.key)).map(l => l.join("").toLowerCase()).filter(m => this.validWordsSet.has(m));
+        getWords(arr: Letter[][]) {
+            return arr.map(l => l.map(s => s)).map(l => l.join("").toLowerCase()).filter(m => this.validWordsSet.has(m));
         },
 
 
