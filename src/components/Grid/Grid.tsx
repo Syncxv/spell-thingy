@@ -10,9 +10,8 @@ export const Grid: React.FC<{}> = () => {
     const { GridManager } = useContext(GridManagerContext);
     const [currentWord, setCurrentWord] = useState<string>("");
     useEffect(() => {
-
-        console.log("hi before", GridManager.grid.length && GridManager.grid[1][0].row);
-    }, [GridManager.grid]);
+        document.addEventListener("mouseup", handleMouseUp);
+    }, []);
     (window as any).GridManager = GridManager;
     const isMouseDownRef = useRef(false);
 
@@ -24,13 +23,13 @@ export const Grid: React.FC<{}> = () => {
         target.classList.add("selected");
     };
 
-    const handleMouseUp = (e: MouseEvent) => {
+    const handleMouseUp = () => {
         isMouseDownRef.current = false;
         console.log(GridManager.getCurrentWordString());
         GridManager.resetSelectedWords();
     };
 
-    const handleMouseOver = (e: MouseEvent<HTMLDivElement>) => {
+    const handleMouseOver = (e: MouseEvent) => {
         if (!isMouseDownRef.current) return;
         const target = e.target as HTMLDivElement;
         const letterKeys = target.dataset.letter;
@@ -58,7 +57,6 @@ export const Grid: React.FC<{}> = () => {
                             ref={e => letter.ref = e}
                             className="flex items-center justify-center text-center text-3xl bg-slate-200 h-full w-full aspect-square text-slate-900 rounded-md select-none"
                             onMouseDown={handleMouseDown}
-                            onMouseUp={handleMouseUp}
                             onMouseOver={e => handleMouseOver(e)}
                             data-letter={`${letter.row},${letter.column}`}
                         >

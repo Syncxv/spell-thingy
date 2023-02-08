@@ -38,14 +38,10 @@ export interface Props {
 export const GridManagerProvider: React.FC<Props> = ({ size, children }) => {
     const [grid, setGrid] = useState<Letter[][]>([]);
     const selectedLetters = useRef<Letter[]>([]);
-    const [validWordsSet, setValidWords] = useState<Set<string>>(new Set([]));
+    const [validWordsSet, setValidWords] = useState<Set<string>>(new Set(wordlist.split("\n").map(l => l.replace(/[\r]/g, "").toLowerCase())));
     const [maxLetters, setMaxLetters] = useState(DEFAULT_MAX_LETTERS);
     useEffect(() => {
-
         setGrid(getRandomGrid(size));
-        const words = wordlist.split("\n").map(l => l.replace(/[\r]/g, "").toLowerCase());
-
-        setValidWords(new Set(words));
     }, []);
     const val = {
         grid,

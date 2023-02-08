@@ -1,5 +1,5 @@
 import { Letter } from "../types";
-import { directions } from "../utils/constants";
+import { directions, MAX_LETTERS_ITEM_NAME } from "../utils/constants";
 import { getRandomGrid } from "../utils/getRandomGrid";
 import { getValue } from "../utils/getValue";
 import { uuidv4 } from "../utils/uuidv4";
@@ -12,7 +12,7 @@ export class GridManager {
     selectedLetters: React.MutableRefObject<Letter[]>;
     size: number;
     maxLetters: number;
-    setMaxLetters: React.Dispatch<React.SetStateAction<number>>;
+    _setMaxLetters: React.Dispatch<React.SetStateAction<number>>;
     validWordsSet: Set<string>;
 
 
@@ -22,9 +22,14 @@ export class GridManager {
         this.size = size;
         this.maxLetters = maxLetters;
         this.selectedLetters = selectedLetters;
-        this.setMaxLetters = setMaxLetters;
+        this._setMaxLetters = setMaxLetters;
         this.validWordsSet = validWordsSet;
 
+    }
+
+    setMaxLetters(n: number) {
+        localStorage.setItem(MAX_LETTERS_ITEM_NAME, n.toString());
+        this._setMaxLetters(n);
     }
 
     shuffle() {

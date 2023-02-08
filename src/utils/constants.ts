@@ -9,5 +9,5 @@ export const directions = {
     "TOP-LEFT": [-1, -1] // up-left
 } as const;
 
-
-export const DEFAULT_MAX_LETTERS = 6;
+export const MAX_LETTERS_ITEM_NAME = "default-max-letters";
+export const DEFAULT_MAX_LETTERS = parseInt(localStorage.getItem(MAX_LETTERS_ITEM_NAME) ?? "6");

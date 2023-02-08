@@ -8,7 +8,6 @@ interface Props {
 export const Results: React.FC<Props> = ({ onNewBoard }) => {
     const [results, setResults] = useState<Letter[][][]>([]);
     const [tab, setTab] = useState(-1);
-    const [word, setWord] = useState(-1);
     const { GridManager } = useContext(GridManagerContext);
     useEffect(() => {
         async function doIt() {
