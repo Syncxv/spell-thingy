@@ -9,7 +9,8 @@ import { memoize } from "../utils/memoize";
 import { uuidv4 } from "../utils/uuidv4";
 export interface IGridManagerContext {
     grid: Letter[][];
-    selectedLetters: React.MutableRefObject<Letter[]>;
+    selectedLetters: Letter[];
+    setSelectedLetters: React.Dispatch<React.SetStateAction<Letter[]>>
     size: number;
     maxLetters: number,
     setMaxLetters: React.Dispatch<React.SetStateAction<number>>,
@@ -31,6 +32,7 @@ export interface IGridManagerContext {
 const initalValues: IGridManagerContext = {
     grid: [],
     selectedLetters: null as any,
+    setSelectedLetters: null as any,
     size: 5,
     maxLetters: 0,
     setMaxLetters: () => { },
@@ -58,9 +60,9 @@ export interface Props {
 
 export const GridManagerProvider: React.FC<Props> = ({ size, children }) => {
     const [grid, setGrid] = useState<Letter[][]>([]);
+    const [selectedLetters, setSelectedLetters] = useState<Letter[]>([]);
     const [validWordsSet, setValidWords] = useState<Set<string>>(new Set([]));
     const [maxLetters, setMaxLetters] = useState(DEFAULT_MAX_LETTERS);
-    const selectedLetters = useRef<Letter[]>([]);
     const getWordsMemo = useRef(() => { });
     useEffect(() => {
 
@@ -72,6 +74,7 @@ export const GridManagerProvider: React.FC<Props> = ({ size, children }) => {
     const val = {
         grid,
         selectedLetters,
+        setSelectedLetters,
         size,
         validWordsSet,
         maxLetters,
@@ -81,14 +84,16 @@ export const GridManagerProvider: React.FC<Props> = ({ size, children }) => {
         },
 
         setNewGrid(str: string) {
-            const rows: Letter[][] = [];
-            const columns = 5;
-
-            for (let i = 0; i < str.length; i += columns) {
-                rows.push(str.slice(i, i + columns).split("").map((s, j) => ({ id: uuidv4(), row: i, column: j, key: s.toUpperCase(), value: getValue(s.toUpperCase()) })));
+            const array2d: Letter[][] = [];
+            for (let row = 0; row < 5; row++) {
+                array2d[row] = [];
+                for (let col = 0; col < 5; col++) {
+                    array2d[row][col] = { id: uuidv4(), key: str[row * 5 + col], value: getValue(str[row * 5 + col]), row, column: col };
+                }
             }
 
-            setGrid(rows);
+
+            setGrid(array2d);
         },
         move(direction: keyof typeof directions, from: Letter, distance = 1) {
             this.checkIfIsStart(from);
@@ -104,19 +109,19 @@ export const GridManagerProvider: React.FC<Props> = ({ size, children }) => {
             }
         },
         checkIfIsStart(letter: Letter) {
-            if (selectedLetters.current.length === 0) {
-                selectedLetters.current.push(letter);
+            if (selectedLetters.length === 0) {
+                setSelectedLetters(prev => [...prev, letter]);
                 letter.ref?.classList.add("selected");
             }
         },
         pushToSelectedLetters(letter: Letter) {
-            const selectedLetterz = this.selectedLetters.current;
-            if (selectedLetterz.length > 0 && !this.isAdjecent(letter, selectedLetterz[selectedLetterz.length - 1])) {
+            if (selectedLetters.length > 0 && !this.isAdjecent(letter, selectedLetters[selectedLetters.length - 1])) {
+                console.log("is not adjacent so removing all selected layers ong");
                 grid.flat().forEach(m => m.ref?.classList.remove("selected"));
-                selectedLetters.current = [];
+                setSelectedLetters([]);
             }
-            for (var selectionType = -1, o = 0; o < selectedLetterz.length; o++)
-                if (selectedLetterz[o].id === letter.id) {
+            for (var selectionType = -1, o = 0; o < selectedLetters.length; o++)
+                if (selectedLetters[o].id === letter.id) {
                     selectionType = o;
                     break;
                 }
@@ -124,14 +129,13 @@ export const GridManagerProvider: React.FC<Props> = ({ size, children }) => {
             // -1 means select letter XD
             if (selectionType === -1) {
                 letter.ref?.classList.add("selected");
-                selectedLetterz.push(letter);
-
+                setSelectedLetters(prev => [...prev, letter]);
             }
             // deselect layer XD
-            else if (selectionType === selectedLetterz.length - 2) {
-                console.log(":O");
-                var letterToDeSelect = selectedLetterz[selectedLetterz.length - 1];
-                selectedLetters.current.pop();
+            else if (selectionType === selectedLetters.length - 2) {
+                console.log("deselecting latter", letter);
+                var letterToDeSelect = selectedLetters[selectedLetters.length - 1];
+                setSelectedLetters(prev => prev.filter(s => s !== letterToDeSelect));
                 letterToDeSelect?.ref?.classList.remove("selected");
             }
         },
@@ -140,18 +144,18 @@ export const GridManagerProvider: React.FC<Props> = ({ size, children }) => {
             return Math.abs(a.column - b.column) <= 1 && Math.abs(a.row - b.row) <= 1;
         },
         getGridAsString: () => grid.flat().map(m => m.key).join(""),
-        getCurrentWordString: () => selectedLetters.current.map(l => l.key).join(""),
+        getCurrentWordString: () => selectedLetters.map(l => l.key).join(""),
         getNeighbours(letter: Letter) {
             const neighbors: Letter[] = [];
-            for (const [dx, dy] of Object.values(directions)) {
-                const x2 = letter.row + dx;
-                const y2 = letter.column + dy;
+            // for (const [dx, dy] of Object.values(directions)) {
+            //     const x2 = letter.row + dx;
+            //     const y2 = letter.column + dy;
 
-                if (x2 >= 0 && x2 < grid.length && y2 >= 0 && y2 < grid[0].length) {
-                    neighbors.push(grid[x2][y2]);
-                }
+            //     if (x2 >= 0 && x2 < grid.length && y2 >= 0 && y2 < grid[0].length) {
+            //         neighbors.push(grid[x2][y2]);
+            //     }
 
-            }
+            // }
             return neighbors;
         },
         getAllCombinations(row: number, col: number, visited: boolean[][], combination: Letter[], allCombinations: Letter[][], desired: number) {

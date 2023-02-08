@@ -1,4 +1,4 @@
-import { MouseEvent, useContext, useRef, useState } from "react";
+import { MouseEvent, useContext, useEffect, useRef, useState } from "react";
 
 import { GridManagerContext } from "../../context/GridContext";
 import { getLetterByRowCol } from "../../utils/getLetterByRowCol";
@@ -9,6 +9,10 @@ export const SIZE = 5;
 export const Grid: React.FC<{}> = () => {
     const GridManager = useContext(GridManagerContext);
     const [currentWord, setCurrentWord] = useState<string>("");
+    useEffect(() => {
+
+        console.log("hi before", GridManager.grid.length && GridManager.grid[1][0].row);
+    }, [GridManager.grid]);
     (window as any).GridManager = GridManager;
     const isMouseDownRef = useRef(false);
 
@@ -24,7 +28,7 @@ export const Grid: React.FC<{}> = () => {
         isMouseDownRef.current = false;
         console.log(GridManager.getCurrentWordString());
 
-        GridManager.selectedLetters.current = [];
+        GridManager.setSelectedLetters([]);
         GridManager.grid.flat().forEach(l => l.ref?.classList?.remove("selected"));
     };
 
