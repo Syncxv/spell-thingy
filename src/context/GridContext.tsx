@@ -27,6 +27,7 @@ export interface IGridManagerContext {
     getAllCombinations(row: number, col: number, visited: boolean[][], combination: Letter[], allCombinations: Letter[][], desired: number): void;
     getCombinations(n?: number): Letter[][];
     getWords(arr: Letter[][]): string[];
+    moveFrom: (from: Letter, to: Letter) => void
 }
 
 const initalValues: IGridManagerContext = {
@@ -48,7 +49,8 @@ const initalValues: IGridManagerContext = {
     getNeighbours: () => [],
     isAdjecent: () => false,
     getCombinations: () => [],
-    getWords: () => []
+    getWords: () => [],
+    moveFrom: (from: Letter, to: Letter) => { }
 };
 
 export const GridManagerContext = createContext<IGridManagerContext>(initalValues);
@@ -107,6 +109,10 @@ export const GridManagerProvider: React.FC<Props> = ({ size, children }) => {
                 if (x2 >= 0 && x2 < grid.length && y2 >= 0 && y2 < grid[0].length)
                     this.pushToSelectedLetters(grid[x2][y2]);
             }
+        },
+        moveFrom(from: Letter, to: Letter) {
+            this.pushToSelectedLetters(from);
+            this.pushToSelectedLetters(to);
         },
         checkIfIsStart(letter: Letter) {
             if (selectedLetters.length === 0) {

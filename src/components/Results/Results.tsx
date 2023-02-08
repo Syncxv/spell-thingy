@@ -8,6 +8,7 @@ interface Props {
 export const Results: React.FC<Props> = ({ onNewBoard }) => {
     const [results, setResults] = useState<Letter[][][]>([]);
     const [tab, setTab] = useState(-1);
+    const [word, setWord] = useState(-1);
     const GridManager = useContext(GridManagerContext);
     useEffect(() => {
         async function doIt() {
@@ -24,6 +25,13 @@ export const Results: React.FC<Props> = ({ onNewBoard }) => {
         }
         doIt();
     }, []);
+    useEffect(() => {
+        if (tab === -1 || word === -1 || GridManager.selectedLetters.length > 0) return;
+        results[tab][word].reduce((prev, curr) => {
+            GridManager.moveFrom(prev, curr);
+            return curr;
+        });
+    }, [GridManager.selectedLetters]);
     return (
         <div className="input-wrapper w-full h-full flex flex-col justify-between items-start pt-[7.75rem] px-8">
             <div className="hey w-full">
@@ -38,7 +46,11 @@ export const Results: React.FC<Props> = ({ onNewBoard }) => {
                         )}
                     </div>
                     <div className="word-wrapper flex gap-4 flex-wrap overflow-auto py-4 max-h-[30rem]">
-                        {results.length && results[tab].length ? results[tab].map((word, i) => <div key={i} className="p-2 bg-gray-200 text-gray-900 rounded-md">{word.map(m => m.key).join("")}</div>) : <p>No words eh</p>}
+                        {results.length && results[tab].length ? results[tab].map((word, i) => <div key={i} onClick={() => {
+                            GridManager.grid.flat().forEach(m => m.ref?.classList.remove("selected"));
+                            GridManager.setSelectedLetters([]);
+                            setWord(i);
+                        }} className="p-2 bg-gray-200 text-gray-900 rounded-md">{word.map(m => m.key).join("")}</div>) : <p>No words eh</p>}
                     </div>
                 </div>
             </div>
