@@ -5,6 +5,7 @@ import { Letter } from "../types";
 import { DEFAULT_MAX_LETTERS, directions } from "../utils/constants";
 import { getRandomGrid } from "../utils/getRandomGrid";
 import { getValue } from "../utils/getValue";
+import { memoize } from "../utils/memoize";
 import { uuidv4 } from "../utils/uuidv4";
 export interface IGridManagerContext {
     grid: Letter[][];
@@ -60,6 +61,7 @@ export const GridManagerProvider: React.FC<Props> = ({ size, children }) => {
     const [validWordsSet, setValidWords] = useState<Set<string>>(new Set([]));
     const [maxLetters, setMaxLetters] = useState(DEFAULT_MAX_LETTERS);
     const selectedLetters = useRef<Letter[]>([]);
+    const getWordsMemo = useRef(() => { });
     useEffect(() => {
 
         setGrid(getRandomGrid(size));
@@ -67,7 +69,7 @@ export const GridManagerProvider: React.FC<Props> = ({ size, children }) => {
 
         setValidWords(new Set(words));
     }, []);
-    return <GridManagerContext.Provider value={{
+    const val = {
         grid,
         selectedLetters,
         size,
@@ -196,7 +198,9 @@ export const GridManagerProvider: React.FC<Props> = ({ size, children }) => {
         },
 
 
-    }}>
+    };
+    val.getWords = memoize(val.getWords);
+    return <GridManagerContext.Provider value={val}>
         {children}
     </GridManagerContext.Provider>;
 
