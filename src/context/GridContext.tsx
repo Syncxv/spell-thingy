@@ -1,11 +1,11 @@
 import { createContext, useEffect, useRef, useState } from "react";
 
+import wordlist from "../assets/wordlist.txt?raw";
 import { Letter } from "../types";
 import { DEFAULT_MAX_LETTERS, directions } from "../utils/constants";
 import { getRandomGrid } from "../utils/getRandomGrid";
 import { getValue } from "../utils/getValue";
 import { uuidv4 } from "../utils/uuidv4";
-
 export interface IGridManagerContext {
     grid: Letter[][];
     selectedLetters: React.MutableRefObject<Letter[]>;
@@ -63,13 +63,9 @@ export const GridManagerProvider: React.FC<Props> = ({ size, children }) => {
     useEffect(() => {
 
         setGrid(getRandomGrid(size));
+        const words = wordlist.split("\n").map(l => l.replace(/[\r]/g, ""));
 
-        async function initWords() {
-            const rawText = await (await fetch("https://raw.githubusercontent.com/dwyl/english-words/master/words_alpha.txt")).text();
-            const words = rawText.split("\n").map(l => l.replace(/[\r]/g, ""));
-            setValidWords(new Set(words));
-        }
-        initWords();
+        setValidWords(new Set(words));
     }, []);
     return <GridManagerContext.Provider value={{
         grid,
