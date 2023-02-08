@@ -25,13 +25,6 @@ export const Results: React.FC<Props> = ({ onNewBoard }) => {
         }
         doIt();
     }, []);
-    useEffect(() => {
-        if (tab === -1 || word === -1 || GridManager.selectedLetters.length > 0) return;
-        results[tab][word].reduce((prev, curr) => {
-            GridManager.moveFrom(prev, curr);
-            return curr;
-        });
-    }, [GridManager.selectedLetters]);
     return (
         <div className="input-wrapper w-full h-full flex flex-col justify-between items-start pt-[7.75rem] px-8">
             <div className="hey w-full">
@@ -47,15 +40,17 @@ export const Results: React.FC<Props> = ({ onNewBoard }) => {
                     </div>
                     <div className="word-wrapper flex gap-4 flex-wrap overflow-auto py-4 max-h-[30rem]">
                         {results.length && results[tab].length ? results[tab].map((word, i) => <div key={i} onClick={() => {
-                            GridManager.grid.flat().forEach(m => m.ref?.classList.remove("selected"));
-                            GridManager.setSelectedLetters([]);
-                            setWord(i);
+                            GridManager.resetSelectedWords();
+                            results[tab][i].reduce((prev, curr) => {
+                                GridManager.moveFrom(prev, curr);
+                                return curr;
+                            });
                         }} className="p-2 bg-gray-200 text-gray-900 rounded-md">{word.map(m => m.key).join("")}</div>) : <p>No words eh</p>}
                     </div>
                 </div>
             </div>
 
-            <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md" onClick={onNewBoard}>New Board</button>
+            <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md" onClick={() => (GridManager.resetSelectedWords(), onNewBoard())}>New Board</button>
         </div>
     );
 };

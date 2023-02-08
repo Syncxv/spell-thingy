@@ -28,7 +28,7 @@ export const Grid: React.FC<{}> = () => {
         isMouseDownRef.current = false;
         console.log(GridManager.getCurrentWordString());
 
-        GridManager.setSelectedLetters([]);
+        GridManager.selectedLetters.current = [];
         GridManager.grid.flat().forEach(l => l.ref?.classList?.remove("selected"));
     };
 

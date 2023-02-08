@@ -7,10 +7,10 @@ import { getRandomGrid } from "../utils/getRandomGrid";
 import { getValue } from "../utils/getValue";
 import { memoize } from "../utils/memoize";
 import { uuidv4 } from "../utils/uuidv4";
+import { calculateRotation, getMagnitude, normalizeVector, subtractVectors } from "../utils/vectorSheet";
 export interface IGridManagerContext {
     grid: Letter[][];
-    selectedLetters: Letter[];
-    setSelectedLetters: React.Dispatch<React.SetStateAction<Letter[]>>
+    selectedLetters: React.MutableRefObject<Letter[]>
     size: number;
     maxLetters: number,
     setMaxLetters: React.Dispatch<React.SetStateAction<number>>,
@@ -27,13 +27,13 @@ export interface IGridManagerContext {
     getAllCombinations(row: number, col: number, visited: boolean[][], combination: Letter[], allCombinations: Letter[][], desired: number): void;
     getCombinations(n?: number): Letter[][];
     getWords(arr: Letter[][]): string[];
-    moveFrom: (from: Letter, to: Letter) => void
+    moveFrom: (from: Letter, to: Letter) => void,
+    resetSelectedWords: () => void
 }
 
 const initalValues: IGridManagerContext = {
     grid: [],
     selectedLetters: null as any,
-    setSelectedLetters: null as any,
     size: 5,
     maxLetters: 0,
     setMaxLetters: () => { },
@@ -50,7 +50,8 @@ const initalValues: IGridManagerContext = {
     isAdjecent: () => false,
     getCombinations: () => [],
     getWords: () => [],
-    moveFrom: (from: Letter, to: Letter) => { }
+    moveFrom: (from: Letter, to: Letter) => { },
+    resetSelectedWords: () => { }
 };
 
 export const GridManagerContext = createContext<IGridManagerContext>(initalValues);
@@ -62,10 +63,9 @@ export interface Props {
 
 export const GridManagerProvider: React.FC<Props> = ({ size, children }) => {
     const [grid, setGrid] = useState<Letter[][]>([]);
-    const [selectedLetters, setSelectedLetters] = useState<Letter[]>([]);
+    const selectedLetters = useRef<Letter[]>([]);
     const [validWordsSet, setValidWords] = useState<Set<string>>(new Set([]));
     const [maxLetters, setMaxLetters] = useState(DEFAULT_MAX_LETTERS);
-    const getWordsMemo = useRef(() => { });
     useEffect(() => {
 
         setGrid(getRandomGrid(size));
@@ -76,7 +76,6 @@ export const GridManagerProvider: React.FC<Props> = ({ size, children }) => {
     const val = {
         grid,
         selectedLetters,
-        setSelectedLetters,
         size,
         validWordsSet,
         maxLetters,
@@ -115,19 +114,19 @@ export const GridManagerProvider: React.FC<Props> = ({ size, children }) => {
             this.pushToSelectedLetters(to);
         },
         checkIfIsStart(letter: Letter) {
-            if (selectedLetters.length === 0) {
-                setSelectedLetters(prev => [...prev, letter]);
+            if (selectedLetters.current.length === 0) {
+                selectedLetters.current.push(letter);
                 letter.ref?.classList.add("selected");
             }
         },
         pushToSelectedLetters(letter: Letter) {
-            if (selectedLetters.length > 0 && !this.isAdjecent(letter, selectedLetters[selectedLetters.length - 1])) {
+            if (selectedLetters.current.length > 0 && !this.isAdjecent(letter, selectedLetters.current[selectedLetters.current.length - 1])) {
                 console.log("is not adjacent so removing all selected layers ong");
                 grid.flat().forEach(m => m.ref?.classList.remove("selected"));
-                setSelectedLetters([]);
+                selectedLetters.current = ([]);
             }
-            for (var selectionType = -1, o = 0; o < selectedLetters.length; o++)
-                if (selectedLetters[o].id === letter.id) {
+            for (var selectionType = -1, o = 0; o < selectedLetters.current.length; o++)
+                if (selectedLetters.current[o].id === letter.id) {
                     selectionType = o;
                     break;
                 }
@@ -135,13 +134,14 @@ export const GridManagerProvider: React.FC<Props> = ({ size, children }) => {
             // -1 means select letter XD
             if (selectionType === -1) {
                 letter.ref?.classList.add("selected");
-                setSelectedLetters(prev => [...prev, letter]);
+                selectedLetters.current.length > 0 && this.connectLetters(selectedLetters.current[selectedLetters.current.length - 1], letter, "red");
+                selectedLetters.current.push(letter);
             }
             // deselect layer XD
-            else if (selectionType === selectedLetters.length - 2) {
+            else if (selectionType === selectedLetters.current.length - 2) {
                 console.log("deselecting latter", letter);
-                var letterToDeSelect = selectedLetters[selectedLetters.length - 1];
-                setSelectedLetters(prev => prev.filter(s => s !== letterToDeSelect));
+                var letterToDeSelect = selectedLetters.current[selectedLetters.current.length - 1];
+                selectedLetters.current.pop();
                 letterToDeSelect?.ref?.classList.remove("selected");
             }
         },
@@ -149,8 +149,33 @@ export const GridManagerProvider: React.FC<Props> = ({ size, children }) => {
         isAdjecent(a: Letter, b: Letter) {
             return Math.abs(a.column - b.column) <= 1 && Math.abs(a.row - b.row) <= 1;
         },
+
+        connectLetters(startLetter: Letter, endLetter: Letter, linkColor: string) {
+
+            const startLetterPosition = { x: startLetter.ref!.offsetLeft + startLetter.ref!.offsetWidth / 2, y: startLetter.ref!.offsetTop + startLetter.ref!.offsetHeight / 2 };
+            const endLetterPosition = { x: endLetter.ref!.offsetLeft + endLetter.ref!.offsetWidth / 2, y: endLetter.ref!.offsetTop + endLetter.ref!.offsetHeight / 2 };
+
+            const directionVector = subtractVectors(startLetterPosition, endLetterPosition);
+            const unitDirectionVector = normalizeVector(directionVector);
+            const rotation = calculateRotation(unitDirectionVector);
+
+            const linkDiv = document.createElement("div");
+            linkDiv.style.position = "absolute";
+            linkDiv.style.width = `${getMagnitude(startLetterPosition, endLetterPosition)}px`;
+            linkDiv.style.height = "2px";
+            linkDiv.style.transformOrigin = "0% 50%";
+            linkDiv.style.transform = `rotate(${rotation}rad)`;
+            linkDiv.style.left = `${startLetterPosition.x}px`;
+            linkDiv.style.top = `${startLetterPosition.y}px`;
+            linkDiv.style.background = linkColor;
+            linkDiv.style.zIndex = "-2";
+            linkDiv.id = "bruh-link";
+            document.body.appendChild(linkDiv);
+        },
+
         getGridAsString: () => grid.flat().map(m => m.key).join(""),
-        getCurrentWordString: () => selectedLetters.map(l => l.key).join(""),
+        getCurrentWordString: () => selectedLetters.current.map(l => l.key).join(""),
+        resetSelectedWords: () => (selectedLetters.current = [], grid.flat().forEach(m => m?.ref?.classList.remove("selected")), Array.from(document.querySelectorAll("#bruh-link")).forEach(el => el.remove())),
         getNeighbours(letter: Letter) {
             const neighbors: Letter[] = [];
             // for (const [dx, dy] of Object.values(directions)) {
